@@ -15,7 +15,7 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var messageTextfield: UITextField!
     
     var messages: [Message] = [
-        Message(sender: "1@2.com", body: "first message"),
+        Message(sender: "1@2.com", body: "first messageirst messageirst messageirst messageirst messageirst messageirst messageirst messageirst message"),
         Message(sender: "a@b.com", body: "second message"),
         Message(sender: "1@2.com", body: "third message")
     ]
@@ -25,6 +25,9 @@ class ChatViewController: UIViewController {
         tableView.dataSource = self
         navigationItem.hidesBackButton = true
         title = K.appName
+        
+        //nibName is the name of the cell file without .xib
+        tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
@@ -49,9 +52,9 @@ extension ChatViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
-        cell.textLabel?.text = messages[indexPath.row].body
-        
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath) as! MessageCell
+//        cell.textLabel?.text = messages[indexPath.row].body
+        cell.label.text = messages[indexPath.row].body
         return cell
     }
     
