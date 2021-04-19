@@ -14,8 +14,15 @@ class ChatViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var messageTextfield: UITextField!
     
+    var messages: [Message] = [
+        Message(sender: "1@2.com", body: "first message"),
+        Message(sender: "a@b.com", body: "second message"),
+        Message(sender: "1@2.com", body: "third message")
+    ]
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        tableView.dataSource = self
         navigationItem.hidesBackButton = true
         title = K.appName
     }
@@ -32,5 +39,21 @@ class ChatViewController: UIViewController {
         }
           
     }
+    
+}
+
+// MARK: - UITableViewDataSource
+extension ChatViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return messages.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: K.cellIdentifier, for: indexPath)
+        cell.textLabel?.text = messages[indexPath.row].body
+        
+        return cell
+    }
+    
     
 }
