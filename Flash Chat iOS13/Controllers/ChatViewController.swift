@@ -17,9 +17,9 @@ class ChatViewController: UIViewController {
     let db = Firestore.firestore()
     
     var messages: [Message] = [
-        Message(sender: "1@2.com", body: "first messageirst messageirst messageirst messageirst messageirst messageirst messageirst messageirst message"),
-        Message(sender: "a@b.com", body: "second message"),
-        Message(sender: "1@2.com", body: "third message")
+//        Message(sender: "1@2.com", body: "first messageirst messageirst messageirst messageirst messageirst messageirst messageirst messageirst message"),
+//        Message(sender: "a@b.com", body: "second message"),
+//        Message(sender: "1@2.com", body: "third message")
     ]
     
     override func viewDidLoad() {
@@ -31,6 +31,9 @@ class ChatViewController: UIViewController {
         
         //nibName is the name of the cell file without .xib
         tableView.register(UINib(nibName: K.cellNibName, bundle: nil), forCellReuseIdentifier: K.cellIdentifier)
+        
+        loadMessages()
+
     }
     
     @IBAction func sendPressed(_ sender: UIButton) {
@@ -58,7 +61,33 @@ class ChatViewController: UIViewController {
         }
         
     }
-    
+ 
+    func loadMessages() {
+        messages = []
+        db.collection(K.FStore.collectionName).getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error \(err)")
+            } else {
+                if let snapshotDocuments = querySnapshot?.documents {
+                    for document in snapshotDocuments {
+                        print(document.data())
+                        let data = document.data()
+                        if let sender = data[K.FStore.senderField] as? String,
+                           let body = data[K.FStore.bodyField] as? String {
+                            let newMessage = Message(sender: sender, body: body)
+                            self.messages.append(newMessage)
+                        }
+                    }
+                    
+                    //We are trying to manipulate user interface in closure so it's good practice to do
+                    DispatchQueue.main.async {
+                        self.tableView.reloadData()
+                    }
+                }
+                
+            }
+        }
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -83,3 +112,4 @@ extension ChatViewController: UITextFieldDelegate {
         return false
     }
 }
+
