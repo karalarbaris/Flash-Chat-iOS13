@@ -25,7 +25,6 @@ class ChatViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.dataSource = self
-        messageTextfield.delegate = self
         navigationItem.hidesBackButton = true
         title = K.appName
         
@@ -112,11 +111,3 @@ extension ChatViewController: UITableViewDataSource {
     
     
 }
-
-extension ChatViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        view.endEditing(true)
-        return false
-    }
-}
-
