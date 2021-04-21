@@ -41,7 +41,8 @@ class ChatViewController: UIViewController {
         if let messageBody = messageTextfield.text, let messageSender = Auth.auth().currentUser?.email {
             db.collection(K.FStore.collectionName).addDocument(data: [
                 K.FStore.senderField: messageSender,
-                K.FStore.bodyField: messageBody
+                K.FStore.bodyField: messageBody,
+                K.FStore.dateField: Date().timeIntervalSince1970
             ]) { (error) in
                 if let e = error {
                     print("Database error \(e)")
@@ -63,7 +64,9 @@ class ChatViewController: UIViewController {
     }
  
     func loadMessages() {
-        db.collection(K.FStore.collectionName).addSnapshotListener { (querySnapshot, err) in
+        db.collection(K.FStore.collectionName)
+            .order(by: K.FStore.dateField)
+            .addSnapshotListener { (querySnapshot, err) in
             if let err = err {
                 print("Error \(err)")
             } else {
@@ -74,7 +77,7 @@ class ChatViewController: UIViewController {
                         print(document.data())
                         let data = document.data()
                         if let sender = data[K.FStore.senderField] as? String,
-                           let body = data[K.FStore.bodyField] as? String {
+                           let body = data[K.FStore.bodyField] as? String{
                             let newMessage = Message(sender: sender, body: body)
                             self.messages.append(newMessage)
                         }
